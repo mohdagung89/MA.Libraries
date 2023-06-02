@@ -20,6 +20,7 @@ public interface IQueryWhere
     QueryBuilderHelper Where(string column, string operation, string value);
     QueryBuilderHelper Where(string column, string operation, int value);
     QueryBuilderHelper Where(string column, string operation, bool value);
+    QueryBuilderHelper WhereIgnoreCase(string column, string operation, string value);
     QueryBuilderHelper WhereRight(int num, string column, string operation, string value);
     QueryBuilderHelper WhereRightLeft(int numRight, int numLeft, string column, string operation, string value);
     QueryBuilderHelper WhereNull(string column);
@@ -42,7 +43,7 @@ public interface IQueryWhere
 }
 public interface IQueryOrder
 {
-    QueryBuilderHelper OrderBy(string column, string? orderMethode = "ASC");
+    QueryBuilderHelper OrderBy(string column, string? orderMethod = "ASC");
 }
 public interface IQueryGroup
 {
@@ -303,6 +304,20 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     }
 
     /// <summary>
+    /// Register WHERE clause condition to filter specific data that will be returned <br/>
+    /// Ignore case sensitive
+    /// </summary>
+    /// <param name="column"></param>
+    /// <param name="operation"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public QueryBuilderHelper WhereIgnoreCase(string column, string operation, string value)
+    {
+        _whereList.Add($"LOWER({_initialTable}.{column}) {operation} '{value.ToLower().Replace(@"\", @"\\").Replace(@"'", @"\'")}'");
+        return this;
+    }
+
+    /// <summary>
     /// Register WHERE clause condition to filter matched data for (n) last character value
     /// </summary>
     /// <param name="num"></param>
@@ -361,7 +376,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <returns></returns>
     public QueryBuilderHelper WhereContains(string column, string value)
     {
-        _whereList.Add($"{_initialTable}.{column} LIKE '%{value.Replace(@"\", @"\\").Replace(@"'", @"\'")}%'");
+        _whereList.Add($"lower({_initialTable}.{column}) LIKE '%{value.Replace(@"\", @"\\").Replace(@"'", @"\'").ToLower()}%'");
         return this;
     }
 
@@ -373,7 +388,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <returns></returns>
     public QueryBuilderHelper WhereNotContains(string column, string value)
     {
-        _whereList.Add($"{_initialTable}.{column} NOT LIKE '%{value.Replace(@"\", @"\\").Replace(@"'", @"\'")}%'");
+        _whereList.Add($"lower({_initialTable}.{column}) NOT LIKE '%{value.Replace(@"\", @"\\").Replace(@"'", @"\'").ToLower()}%'");
         return this;
     }
 
@@ -517,12 +532,12 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// Register ORDER BY statement to sorting the data by specific column
     /// </summary>
     /// <param name="column"></param>
-    /// <param name="orderMethode"></param>
+    /// <param name="orderMethod"></param>
     /// <returns></returns>
-    public QueryBuilderHelper OrderBy(string column, string? orderMethode = "ASC")
+    public QueryBuilderHelper OrderBy(string column, string? orderMethod = "ASC")
     {
-        orderMethode = (orderMethode ?? "ASC").ToUpper() == "ASC" || (orderMethode ?? "ASC").ToUpper() == "DESC" ? (orderMethode ?? "ASC").ToUpper() : "ASC";
-        _orderList.Add($"{_initialTable}.{column} {orderMethode}");
+        orderMethod = (orderMethod ?? "ASC").ToUpper() == "ASC" || (orderMethod ?? "ASC").ToUpper() == "DESC" ? (orderMethod ?? "ASC").ToUpper() : "ASC";
+        _orderList.Add($"{_initialTable}.{column} {orderMethod}");
         return this;
     }
 
