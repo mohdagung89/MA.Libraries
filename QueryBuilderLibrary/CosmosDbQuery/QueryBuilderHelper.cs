@@ -1,3 +1,11 @@
+/*
+ * QueryBuilderHelper
+ * Author: MohdAgung
+ * Version: v1.2.0
+ * Description: A powerful query building library for CosmosDb database.
+ * Source: https://github.com/mohdagung89/MA.Libraries
+ */
+
 using System.ComponentModel;
 using System.Globalization;
 using System.Text;
@@ -74,71 +82,81 @@ public static class EnumExtensions
 public interface IQuerySelect
 {
     bool IsSelectCount();
-    QueryBuilderHelper Distinct();
-    QueryBuilderHelper Select(params string[] columns);
-    QueryBuilderHelper SelectAs(string column, string alias);
-    QueryBuilderHelper SelectCount(string? column = null);
-    QueryBuilderHelper SelectDistinct(params string[] columns);
-    QueryBuilderHelper SelectSumNumberString(params string[] columns);
-    QueryBuilderHelper SelectSum(params string[] columns);
-    QueryBuilderHelper SelectMax(params string[] columns);
-    QueryBuilderHelper SelectRight(int num, params string[] columns);
-    QueryBuilderHelper SelectLeft(int num, params string[] columns);
-    QueryBuilderHelper SelectRightLeft(int numRight, int numLeft, params string[] columns);
-    QueryBuilderHelper SelectRawFunctionAs(string rawFunction, string alias);
+    IQueryBuilder Distinct();
+    IQueryBuilder Select(params string[] columns);
+    IQueryBuilder SelectAs(string column, string alias);
+    IQueryBuilder SelectCount(string? column = null);
+    IQueryBuilder SelectDistinct(params string[] columns);
+    IQueryBuilder SelectSumNumberString(params string[] columns);
+    IQueryBuilder SelectSum(params string[] columns);
+    IQueryBuilder SelectMax(params string[] columns);
+    IQueryBuilder SelectRight(int num, params string[] columns);
+    IQueryBuilder SelectLeft(int num, params string[] columns);
+    IQueryBuilder SelectRightLeft(int numRight, int numLeft, params string[] columns);
+    IQueryBuilder SelectRawFunctionAs(string rawFunction, string alias);
 }
 public interface IQueryWhere
 {
-    QueryBuilderHelper Where(string column, Operation operation, string value);
-    QueryBuilderHelper Where(string column, Operation operation, int value);
-    QueryBuilderHelper Where(string column, Operation operation, float value);
-    QueryBuilderHelper Where(string column, Operation operation, decimal value);
-    QueryBuilderHelper Where(string column, Operation operation, bool value);
-    QueryBuilderHelper Where(string column, Operation operation, DateTime value);
-    QueryBuilderHelper WhereIgnoreCase(string column, Operation operation, string value);
-    QueryBuilderHelper WhereRight(int num, string column, Operation operation, string value);
-    QueryBuilderHelper WhereRightLeft(int numRight, int numLeft, string column, Operation operation, string value);
-    QueryBuilderHelper WhereNull(string column);
-    QueryBuilderHelper WhereNotNull(string column);
-    QueryBuilderHelper WhereContains(string column, string value);
-    QueryBuilderHelper WhereNotContains(string column, string value);
-    QueryBuilderHelper WhereIs(string column, string value);
-    QueryBuilderHelper WhereIsNot(string column, string value);
-    QueryBuilderHelper WhereIs(string column, int value);
-    QueryBuilderHelper WhereIs(string column, float value);
-    QueryBuilderHelper WhereIs(string column, decimal value);
-    QueryBuilderHelper WhereIsNot(string column, int value);
-    QueryBuilderHelper WhereIs(string column, bool value);
-    QueryBuilderHelper WhereIsNot(string column, bool value);
-    QueryBuilderHelper WhereIgnoreCaseIs(string column, string value);
-    QueryBuilderHelper WhereRightIs(int num, string column, string value);
-    QueryBuilderHelper WhereRightLeftIs(int numRight, int numLeft, string column, string value);
-    QueryBuilderHelper WhereIn(string column, params string[] values);
-    QueryBuilderHelper WhereIn(string column, params int[] values);
-    QueryBuilderHelper WhereNotIn(string column, params string[] values);
-    QueryBuilderHelper WhereNotIn(string column, params int[] values);
-    QueryBuilderHelper WhereGroup(string operation, Action<IQueryWhere> expression);
+    IQueryBuilder Where(string column, Operation operation, string value);
+    IQueryBuilder Where(string column, Operation operation, int value);
+    IQueryBuilder Where(string column, Operation operation, float value);
+    IQueryBuilder Where(string column, Operation operation, decimal value);
+    IQueryBuilder Where(string column, Operation operation, bool value);
+    IQueryBuilder Where(string column, Operation operation, DateTime value);
+    IQueryBuilder WhereIgnoreCase(string column, Operation operation, string value);
+    IQueryBuilder WhereRight(int num, string column, Operation operation, string value);
+    IQueryBuilder WhereRightLeft(int numRight, int numLeft, string column, Operation operation, string value);
+    IQueryBuilder WhereNull(string column);
+    IQueryBuilder WhereNotNull(string column);
+    IQueryBuilder WhereContains(string column, string value);
+    IQueryBuilder WhereNotContains(string column, string value);
+    IQueryBuilder WhereIs(string column, string value);
+    IQueryBuilder WhereIsNot(string column, string value);
+    IQueryBuilder WhereIs(string column, int value);
+    IQueryBuilder WhereIs(string column, float value);
+    IQueryBuilder WhereIs(string column, decimal value);
+    IQueryBuilder WhereIsNot(string column, int value);
+    IQueryBuilder WhereIs(string column, bool value);
+    IQueryBuilder WhereIsNot(string column, bool value);
+    IQueryBuilder WhereIgnoreCaseIs(string column, string value);
+    IQueryBuilder WhereRightIs(int num, string column, string value);
+    IQueryBuilder WhereRightLeftIs(int numRight, int numLeft, string column, string value);
+    IQueryBuilder WhereIn(string column, params string[] values);
+    IQueryBuilder WhereIn(string column, params int[] values);
+    IQueryBuilder WhereNotIn(string column, params string[] values);
+    IQueryBuilder WhereNotIn(string column, params int[] values);
+    IQueryBuilder WhereGroup(string operation, Action<IQueryWhere> expression);
 }
 public interface IQueryOrder
 {
-    QueryBuilderHelper OrderBy(string column, string? orderMethod = "ASC");
+    IQueryBuilder OrderBy(string column, string? orderMethod = "ASC");
 }
 public interface IQueryGroup
 {
-    QueryBuilderHelper GroupBy(string column);
-    QueryBuilderHelper GroupBy(params string[] columns);
+    IQueryBuilder GroupBy(string column);
+    IQueryBuilder GroupBy(params string[] columns);
 }
 public interface IQueryPagination
 {
-    QueryBuilderHelper Skip(int skip);
-    QueryBuilderHelper Take(int take);
+    IQueryBuilder Skip(int skip);
+    IQueryBuilder Take(int take);
+}
+public interface ISubQuery
+{
+    IQueryBuilder FromSubQuery(Action<IQueryBuilder> query);
+}
+public interface IQueryBuilder : IQuerySelect, IQueryWhere, IQueryOrder, IQueryGroup, IQueryPagination, ISubQuery
+{
+    string InitialTable { get; }
+    string Query { get; }
+    string Build();
 }
 
 /// <summary>
 /// QueryBuilderHelper class for building dynamic queries.
 /// </summary>
-[Description("v1.1.0")]
-public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQueryGroup, IQueryPagination
+[Description("v1.2.0")]
+public class QueryBuilderHelper : IQueryBuilder
 {
     /// <summary>
     /// Initial for COUNT method
@@ -168,6 +186,21 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     private string _query = string.Empty;
 
     /// <summary>
+    /// Represents a child QueryBuilderHelper used for creating nested queries.
+    /// </summary>
+    protected IQueryBuilder? _child = null;
+
+    /// <summary>
+    /// Create an instance of QueryBuilder
+    /// </summary>
+    /// <returns cref="QueryBuilderHelper"></returns>
+    public static QueryBuilderHelper Initialize()
+    {
+        return new QueryBuilderHelper();
+    }
+
+    #region IQueryBuilder
+    /// <summary>
     /// Return generated query string after method Build was executed
     /// </summary>
     public string Query
@@ -182,39 +215,38 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     {
         get { return _initialTable; }
     }
+    #endregion
 
-    /// <summary>
-    /// Create an instance of QueryBuilder
-    /// </summary>
-    /// <returns cref="QueryBuilderHelper"></returns>
-    public static QueryBuilderHelper Initialize()
-    {
-        return new QueryBuilderHelper();
-    }
-
-    /// <summary>
-    /// Represents a child QueryBuilderHelper used for creating nested queries.
-    /// </summary>
-    protected QueryBuilderHelper? _child = null;
-
+    #region ISubQuery
     /// <summary>
     /// [Beta Version] Creates a nested query using the FromSubQuery method.
     /// </summary>
     /// <param name="query">An Action that defines the nested query using a QueryBuilderHelper instance.</param>
     /// <returns>The current QueryBuilderHelper instance.</returns>
-    public QueryBuilderHelper FromSubQuery(Action<QueryBuilderHelper> query)
+    public IQueryBuilder FromSubQuery(Action<IQueryBuilder> query)
     {
         var qb = Initialize();
         query(qb);
         _child = qb;
         return this;
     }
+    #endregion
+
+    #region IQuerySelect
+    /// <summary>
+    /// Check if builder statement was registered for counting data or not
+    /// </summary>
+    /// <returns></returns>
+    public bool IsSelectCount()
+    {
+        return _isSelectCount;
+    }
 
     /// <summary>
     /// Distinct all result
     /// </summary>
     /// <returns></returns>
-    public QueryBuilderHelper Distinct()
+    public IQueryBuilder Distinct()
     {
         _isSelectDefault = false;
         _isSelectDistinct = true;
@@ -226,7 +258,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// </summary>
     /// <param name="columns"></param>
     /// <returns></returns>
-    public QueryBuilderHelper Select(params string[] columns)
+    public IQueryBuilder Select(params string[] columns)
     {
         _isSelectDefault = true;
         for (int i = 0; i < columns.Length; i++)
@@ -246,7 +278,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <param name="alias">The optional alias for the selected column.</param>
     /// <returns>The current QueryBuilderHelper instance.</returns>
     /// <exception cref="ArgumentException">Thrown if the column is "*", as using asterisk (*) is not allowed in the {nameof(SelectAs)} clause.</exception>
-    public QueryBuilderHelper SelectAs(string column, string alias)
+    public IQueryBuilder SelectAs(string column, string alias)
     {
         _isSelectDefault = true;
         if (column == "*")
@@ -261,10 +293,10 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// </summary>
     /// <param name="column"></param>
     /// <returns></returns>
-    public QueryBuilderHelper SelectCount(string? column = null)
+    public IQueryBuilder SelectCount(string? column = null)
     {
         _isSelectCount = true;
-        _selectCount += string.Format("COUNT({0}) {1}", !string.IsNullOrWhiteSpace(column) ? (_initialTable + "." + column) : ("1"), COUNT_INITIAL);
+        _selectCount += string.Format("COUNT({0}) {1}", !string.IsNullOrWhiteSpace(column) ? (_initialTable + "." + column) : ("1"), CountInitial);
         return this;
     }
 
@@ -273,7 +305,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// </summary>
     /// <param name="column"></param>
     /// <returns></returns>
-    public QueryBuilderHelper SelectRowCount()
+    public IQueryBuilder SelectRowCount()
     {
         _isSelectRowCount = true;
         return this;
@@ -284,7 +316,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// </summary>
     /// <param name="columns"></param>
     /// <returns></returns>
-    public QueryBuilderHelper SelectDistinct(params string[] columns)
+    public IQueryBuilder SelectDistinct(params string[] columns)
     {
         _isSelectDistinct = true;
         for (int i = 0; i < columns.Length; i++)
@@ -302,7 +334,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// </summary>
     /// <param name="columns"></param>
     /// <returns></returns>
-    public QueryBuilderHelper SelectSumNumberString(params string[] columns)
+    public IQueryBuilder SelectSumNumberString(params string[] columns)
     {
         _isSelectDefault = true;
         for (int i = 0; i < columns.Length; i++)
@@ -320,7 +352,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// </summary>
     /// <param name="columns"></param>
     /// <returns></returns>
-    public QueryBuilderHelper SelectSum(params string[] columns)
+    public IQueryBuilder SelectSum(params string[] columns)
     {
         _isSelectDefault = true;
         for (int i = 0; i < columns.Length; i++)
@@ -338,7 +370,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// </summary>
     /// <param name="columns"></param>
     /// <returns></returns>
-    public QueryBuilderHelper SelectMax(params string[] columns)
+    public IQueryBuilder SelectMax(params string[] columns)
     {
         _isSelectDefault = true;
         for (int i = 0; i < columns.Length; i++)
@@ -358,7 +390,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <param name="columns"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentException"></exception>
-    public QueryBuilderHelper SelectRight(int num, params string[] columns)
+    public IQueryBuilder SelectRight(int num, params string[] columns)
     {
         _isSelectDefault = true;
         for (int i = 0; i < columns.Length; i++)
@@ -378,7 +410,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <param name="columns"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentException"></exception>
-    public QueryBuilderHelper SelectLeft(int num, params string[] columns)
+    public IQueryBuilder SelectLeft(int num, params string[] columns)
     {
         _isSelectDefault = true;
         for (int i = 0; i < columns.Length; i++)
@@ -398,7 +430,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <param name="columns"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentException"></exception>
-    public QueryBuilderHelper SelectRightLeft(int numRight, int numLeft, params string[] columns)
+    public IQueryBuilder SelectRightLeft(int numRight, int numLeft, params string[] columns)
     {
         _isSelectDefault = true;
         for (int i = 0; i < columns.Length; i++)
@@ -418,7 +450,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <param name="alias"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentException"></exception>
-    public QueryBuilderHelper SelectRawFunctionAs(string rawFunction, string alias)
+    public IQueryBuilder SelectRawFunctionAs(string rawFunction, string alias)
     {
         _isSelectDefault = true;
         if (rawFunction == "*")
@@ -429,7 +461,9 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
             _selectRawFunction.Add($"{rawFunction} as {alias}");
         return this;
     }
+    #endregion
 
+    #region IQueryWhere
     /// <summary>
     /// Register WHERE clause condition to filter specific data that will be returned
     /// </summary>
@@ -437,7 +471,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <param name="operation"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public QueryBuilderHelper Where(string column, Operation operation, string value)
+    public IQueryBuilder Where(string column, Operation operation, string value)
     {
         _whereList.Add($"{_initialTable}.{column} {operation.GetDescription()} '{value.Replace(@"\", @"\\").Replace(@"'", @"\'")}'");
         return this;
@@ -450,7 +484,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <param name="operation"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public QueryBuilderHelper Where(string column, Operation operation, int value)
+    public IQueryBuilder Where(string column, Operation operation, int value)
     {
         _whereList.Add($"{_initialTable}.{column} {operation.GetDescription()} {value}");
         return this;
@@ -463,7 +497,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <param name="operation"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public QueryBuilderHelper Where(string column, Operation operation, float value)
+    public IQueryBuilder Where(string column, Operation operation, float value)
     {
         _whereList.Add($"{_initialTable}.{column} {operation.GetDescription()} {value.ToString(CultureInfo.InvariantCulture)}");
         return this;
@@ -476,7 +510,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <param name="operation"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public QueryBuilderHelper Where(string column, Operation operation, decimal value)
+    public IQueryBuilder Where(string column, Operation operation, decimal value)
     {
         _whereList.Add($"{_initialTable}.{column} {operation.GetDescription()} {value.ToString(CultureInfo.InvariantCulture)}");
         return this;
@@ -489,7 +523,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <param name="operation"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public QueryBuilderHelper Where(string column, Operation operation, bool value)
+    public IQueryBuilder Where(string column, Operation operation, bool value)
     {
         _whereList.Add($"{_initialTable}.{column} {operation.GetDescription()} {value.ToString().ToLower()}");
         return this;
@@ -502,7 +536,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <param name="operation"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public QueryBuilderHelper Where(string column, Operation operation, DateTime value)
+    public IQueryBuilder Where(string column, Operation operation, DateTime value)
     {
         _whereList.Add($"{_initialTable}.{column} {operation.GetDescription()} '{value.ToString("yyyy-MM-dd HH:mm:ss")}'");
         return this;
@@ -515,7 +549,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <param name="operation"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public QueryBuilderHelper WhereIgnoreCase(string column, Operation operation, string value)
+    public IQueryBuilder WhereIgnoreCase(string column, Operation operation, string value)
     {
         _whereList.Add($"LOWER({_initialTable}.{column}) {operation.GetDescription()} '{value.ToLower().Replace(@"\", @"\\").Replace(@"'", @"\'")}'");
         return this;
@@ -529,7 +563,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <param name="operation"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public QueryBuilderHelper WhereRight(int num, string column, Operation operation, string value)
+    public IQueryBuilder WhereRight(int num, string column, Operation operation, string value)
     {
         _whereList.Add($"RIGHT({_initialTable}.{column}, {num}) {operation.GetDescription()} '{value.Replace(@"\", @"\\").Replace(@"'", @"\'")}'");
         return this;
@@ -544,7 +578,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <param name="operation"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public QueryBuilderHelper WhereRightLeft(int numRight, int numLeft, string column, Operation operation, string value)
+    public IQueryBuilder WhereRightLeft(int numRight, int numLeft, string column, Operation operation, string value)
     {
         _whereList.Add($"LEFT(RIGHT({_initialTable}.{column}, {numRight}), {numLeft}) {operation.GetDescription()} '{value.Replace(@"\", @"\\").Replace(@"'", @"\'")}'");
         return this;
@@ -555,7 +589,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// </summary>
     /// <param name="column"></param>
     /// <returns></returns>
-    public QueryBuilderHelper WhereNull(string column)
+    public IQueryBuilder WhereNull(string column)
     {
         _whereNullList.Add($"{_initialTable}.{column} {Operation.Equal.GetDescription()} null");
         return this;
@@ -566,7 +600,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// </summary>
     /// <param name="column"></param>
     /// <returns></returns>
-    public QueryBuilderHelper WhereNotNull(string column)
+    public IQueryBuilder WhereNotNull(string column)
     {
         _whereNotNullList.Add($"{_initialTable}.{column} {Operation.NotEqual.GetDescription()} null");
         return this;
@@ -578,7 +612,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <param name="column"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public QueryBuilderHelper WhereContains(string column, string value)
+    public IQueryBuilder WhereContains(string column, string value)
     {
         _whereList.Add($"lower({_initialTable}.{column}) LIKE '%{value.Replace(@"\", @"\\").Replace(@"'", @"\'").ToLower()}%'");
         return this;
@@ -590,7 +624,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <param name="column"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public QueryBuilderHelper WhereNotContains(string column, string value)
+    public IQueryBuilder WhereNotContains(string column, string value)
     {
         _whereList.Add($"lower({_initialTable}.{column}) NOT LIKE '%{value.Replace(@"\", @"\\").Replace(@"'", @"\'").ToLower()}%'");
         return this;
@@ -602,7 +636,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <param name="column"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public QueryBuilderHelper WhereIs(string column, string value) => Where(column, Operation.Equal, value);
+    public IQueryBuilder WhereIs(string column, string value) => Where(column, Operation.Equal, value);
 
     /// <summary>
     /// Register WHERE not matched clause condition to filter not matched data that will be returned
@@ -610,7 +644,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <param name="column"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public QueryBuilderHelper WhereIsNot(string column, string value) => Where(column, Operation.NotEqual, value);
+    public IQueryBuilder WhereIsNot(string column, string value) => Where(column, Operation.NotEqual, value);
 
     /// <summary>
     /// Register WHERE matched clause condition to filter matched data that will be returned
@@ -618,7 +652,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <param name="column"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public QueryBuilderHelper WhereIs(string column, int value) => Where(column, Operation.Equal, value);
+    public IQueryBuilder WhereIs(string column, int value) => Where(column, Operation.Equal, value);
 
     /// <summary>
     /// Register WHERE matched clause condition to filter matched data that will be returned
@@ -626,7 +660,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <param name="column"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public QueryBuilderHelper WhereIs(string column, float value) => Where(column, Operation.Equal, value);
+    public IQueryBuilder WhereIs(string column, float value) => Where(column, Operation.Equal, value);
 
     /// <summary>
     /// Register WHERE matched clause condition to filter matched data that will be returned
@@ -634,7 +668,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <param name="column"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public QueryBuilderHelper WhereIs(string column, decimal value) => Where(column, Operation.Equal, value);
+    public IQueryBuilder WhereIs(string column, decimal value) => Where(column, Operation.Equal, value);
 
     /// <summary>
     /// Register WHERE not matched clause condition to filter not matched data that will be returned
@@ -642,7 +676,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <param name="column"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public QueryBuilderHelper WhereIsNot(string column, int value) => Where(column, Operation.NotEqual, value);
+    public IQueryBuilder WhereIsNot(string column, int value) => Where(column, Operation.NotEqual, value);
 
     /// <summary>
     /// Register WHERE matched clause condition to filter matched data that will be returned
@@ -650,7 +684,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <param name="column"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public QueryBuilderHelper WhereIs(string column, bool value) => Where(column, Operation.Equal, value);
+    public IQueryBuilder WhereIs(string column, bool value) => Where(column, Operation.Equal, value);
 
     /// <summary>
     /// Register WHERE not matched clause condition to filter not matched data that will be returned
@@ -658,7 +692,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <param name="column"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public QueryBuilderHelper WhereIsNot(string column, bool value) => Where(column, Operation.NotEqual, value);
+    public IQueryBuilder WhereIsNot(string column, bool value) => Where(column, Operation.NotEqual, value);
 
     /// <summary>
     /// Register WHERE clause condition to filter specific data that will be returned <br/>
@@ -667,7 +701,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <param name="column"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public QueryBuilderHelper WhereIgnoreCaseIs(string column, string value) => WhereIgnoreCase(column, Operation.Equal, value);
+    public IQueryBuilder WhereIgnoreCaseIs(string column, string value) => WhereIgnoreCase(column, Operation.Equal, value);
 
     /// <summary>
     /// Register WHERE clause condition to filter matched data for (n) last character value
@@ -676,7 +710,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <param name="column"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public QueryBuilderHelper WhereRightIs(int num, string column, string value) => WhereRight(num, column, Operation.Equal, value);
+    public IQueryBuilder WhereRightIs(int num, string column, string value) => WhereRight(num, column, Operation.Equal, value);
 
     /// <summary>
     /// Register WHERE clause condition to filter matched data for character value between (n) first character and (n) last character
@@ -685,7 +719,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <param name="column"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public QueryBuilderHelper WhereRightLeftIs(int numRight, int numLeft, string column, string value) => WhereRightLeft(numRight, numLeft, column, Operation.Equal, value);
+    public IQueryBuilder WhereRightLeftIs(int numRight, int numLeft, string column, string value) => WhereRightLeft(numRight, numLeft, column, Operation.Equal, value);
 
     /// <summary>
     /// Register WHERE IN clause condition to filter specific data that will be returned
@@ -693,7 +727,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <param name="column"></param>
     /// <param name="values"></param>
     /// <returns></returns>
-    public QueryBuilderHelper WhereIn(string column, params string[] values)
+    public IQueryBuilder WhereIn(string column, params string[] values)
     {
         for (int i = 0; i < values.Length; i++)
         {
@@ -709,7 +743,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <param name="column"></param>
     /// <param name="values"></param>
     /// <returns></returns>
-    public QueryBuilderHelper WhereIn(string column, params int[] values)
+    public IQueryBuilder WhereIn(string column, params int[] values)
     {
         _whereList.Add($"{_initialTable}.{column} IN ({string.Join(',', values)})");
         return this;
@@ -721,7 +755,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <param name="column"></param>
     /// <param name="values"></param>
     /// <returns></returns>
-    public QueryBuilderHelper WhereNotIn(string column, params string[] values)
+    public IQueryBuilder WhereNotIn(string column, params string[] values)
     {
         for (int i = 0; i < values.Length; i++)
         {
@@ -737,7 +771,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <param name="column"></param>
     /// <param name="values"></param>
     /// <returns></returns>
-    public QueryBuilderHelper WhereNotIn(string column, params int[] values)
+    public IQueryBuilder WhereNotIn(string column, params int[] values)
     {
         _whereList.Add($"{_initialTable}.{column} NOT IN ({string.Join(',', values)})");
         return this;
@@ -749,33 +783,37 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// <param name="operation"></param>
     /// <param name="expression"></param>
     /// <returns></returns>
-    public QueryBuilderHelper WhereGroup(string operation, Action<IQueryWhere> expression)
+    public IQueryBuilder WhereGroup(string operation, Action<IQueryWhere> expression)
     {
         var qb = Initialize();
         expression(qb);
         _whereList.Add("(" + string.Join($" {operation} ", qb._whereList) + ")");
         return this;
     }
+    #endregion
 
+    #region IQueryOrder
     /// <summary>
     /// Register ORDER BY statement to sorting the data by specific column
     /// </summary>
     /// <param name="column"></param>
     /// <param name="orderMethod"></param>
     /// <returns></returns>
-    public QueryBuilderHelper OrderBy(string column, string? orderMethod = "ASC")
+    public IQueryBuilder OrderBy(string column, string? orderMethod = "ASC")
     {
         orderMethod = (orderMethod ?? "ASC").ToUpper() == "ASC" || (orderMethod ?? "ASC").ToUpper() == "DESC" ? (orderMethod ?? "ASC").ToUpper() : "ASC";
         _orderList.Add($"{_initialTable}.{column} {orderMethod}");
         return this;
     }
+    #endregion
 
+    #region IQueryGroup
     /// <summary>
     /// Register GROUP BY statement to sorting the data by specific column
     /// </summary>
     /// <param name="column"></param>
     /// <returns></returns>
-    public QueryBuilderHelper GroupBy(string column)
+    public IQueryBuilder GroupBy(string column)
     {
         if (column == "*")
             throw new ArgumentException($"Cannot use asterisk (*) from {nameof(GroupBy)} clause");
@@ -789,7 +827,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// </summary>
     /// <param name="columns"></param>
     /// <returns></returns>
-    public QueryBuilderHelper GroupBy(params string[] columns)
+    public IQueryBuilder GroupBy(params string[] columns)
     {
         for (int i = 0; i < columns.Length; i++)
         {
@@ -800,13 +838,15 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
         }
         return this;
     }
+    #endregion
 
+    #region IQueryPagination
     /// <summary>
     /// Register OFFSET statement to skip number of record
     /// </summary>
     /// <param name="skip"></param>
     /// <returns></returns>
-    public QueryBuilderHelper Skip(int skip)
+    public IQueryBuilder Skip(int skip)
     {
         _isPaging = true;
         _skip = skip;
@@ -818,21 +858,13 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
     /// </summary>
     /// <param name="take"></param>
     /// <returns></returns>
-    public QueryBuilderHelper Take(int take)
+    public IQueryBuilder Take(int take)
     {
         _isPaging = true;
         _take = take;
         return this;
     }
-
-    /// <summary>
-    /// Check if builder statement was registered for counting data or not
-    /// </summary>
-    /// <returns></returns>
-    public bool IsSelectCount()
-    {
-        return _isSelectCount;
-    }
+    #endregion
 
     /// <summary>
     /// Generate sql query string from registered clause
@@ -876,11 +908,11 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
                 if (_child != null)
                 {
                     var query = _child.Build();
-                    sbSelect.AppendLine($"SELECT COUNT(1) {COUNT_INITIAL} FROM ({query}) AS {_initialTable}");
+                    sbSelect.AppendLine($"SELECT COUNT(1) {CountInitial} FROM ({query}) AS {_initialTable}");
                 }
                 else
                 {
-                    sbSelect.AppendLine($"SELECT COUNT(1) {COUNT_INITIAL} FROM {_initialTable}");
+                    sbSelect.AppendLine($"SELECT COUNT(1) {CountInitial} FROM {_initialTable}");
                 }
             }
             else
@@ -998,7 +1030,7 @@ public class QueryBuilderHelper : IQuerySelect, IQueryWhere, IQueryOrder, IQuery
 
         if (_isSelectRowCount)
         {
-            _query = $"SELECT COUNT({COUNT_INITIAL}) {COUNT_INITIAL} FROM ({_query}) as {COUNT_INITIAL}";
+            _query = $"SELECT COUNT({CountInitial}) {CountInitial} FROM ({_query}) as {CountInitial}";
         }
 
         return _query;
