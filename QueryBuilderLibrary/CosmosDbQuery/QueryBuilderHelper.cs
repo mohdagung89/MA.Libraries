@@ -296,7 +296,7 @@ public class QueryBuilderHelper : IQueryBuilder
     public IQueryBuilder SelectCount(string? column = null)
     {
         _isSelectCount = true;
-        _selectCount += string.Format("COUNT({0}) {1}", !string.IsNullOrWhiteSpace(column) ? (_initialTable + "." + column) : ("1"), CountInitial);
+        _selectCount += string.Format("COUNT({0}) {1}", !string.IsNullOrWhiteSpace(column) ? (_initialTable + "." + column) : ("1"), COUNT_INITIAL);
         return this;
     }
 
@@ -908,11 +908,11 @@ public class QueryBuilderHelper : IQueryBuilder
                 if (_child != null)
                 {
                     var query = _child.Build();
-                    sbSelect.AppendLine($"SELECT COUNT(1) {CountInitial} FROM ({query}) AS {_initialTable}");
+                    sbSelect.AppendLine($"SELECT COUNT(1) {COUNT_INITIAL} FROM ({query}) AS {_initialTable}");
                 }
                 else
                 {
-                    sbSelect.AppendLine($"SELECT COUNT(1) {CountInitial} FROM {_initialTable}");
+                    sbSelect.AppendLine($"SELECT COUNT(1) {COUNT_INITIAL} FROM {_initialTable}");
                 }
             }
             else
@@ -1030,7 +1030,7 @@ public class QueryBuilderHelper : IQueryBuilder
 
         if (_isSelectRowCount)
         {
-            _query = $"SELECT COUNT({CountInitial}) {CountInitial} FROM ({_query}) as {CountInitial}";
+            _query = $"SELECT COUNT({COUNT_INITIAL}) {COUNT_INITIAL} FROM ({_query}) as {COUNT_INITIAL}";
         }
 
         return _query;
