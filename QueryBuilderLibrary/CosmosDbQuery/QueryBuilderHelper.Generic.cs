@@ -57,7 +57,11 @@ public interface IQueryGroup<T>
 {
     IQueryBuilder<T> GroupBy(Func<T, List<string>> delegateFunc);
 }
-public interface IQueryBuilder<T> : IQueryBuilder, IQuerySelect<T>, IQueryWhere<T>, IQueryGroup<T>
+public interface ISubQuery<T>
+{
+    IQueryBuilder<T> FromSubQuery(Action<IQueryBuilder<T>> query);
+}
+public interface IQueryBuilder<T> : IQueryBuilder, IQuerySelect<T>, IQueryWhere<T>, IQueryGroup<T>, ISubQuery<T>
 {
 }
 
@@ -87,7 +91,7 @@ public class QueryBuilderHelper<T> : QueryBuilderHelper, IQueryBuilder<T>
         return new QueryBuilderHelper<T>();
     }
 
-    #region IQueryBuilder
+    #region ISubQuery
     /// <summary>
     /// [Beta Version] Creates a nested query using the FromSubQuery method.
     /// </summary>

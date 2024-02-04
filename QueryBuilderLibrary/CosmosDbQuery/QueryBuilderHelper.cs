@@ -914,11 +914,13 @@ public class QueryBuilderHelper : IQueryBuilder
                 if (_child != null)
                 {
                     var query = _child.Build();
-                    sbSelect.AppendLine($"SELECT COUNT(1) {COUNT_INITIAL} FROM ({query}) AS {_initialTable}");
+                    sbSelect.AppendLine($"SELECT COUNT(1) {COUNT_INITIAL}");
+                    sbSelect.AppendLine($"FROM ({query}) AS {_initialTable}");
                 }
                 else
                 {
-                    sbSelect.AppendLine($"SELECT COUNT(1) {COUNT_INITIAL} FROM {_initialTable}");
+                    sbSelect.AppendLine($"SELECT COUNT(1) {COUNT_INITIAL}");
+                    sbSelect.AppendLine($"FROM {_initialTable}");
                 }
             }
             else
@@ -927,12 +929,14 @@ public class QueryBuilderHelper : IQueryBuilder
                 {
                     var query = _child.Build();
                     _selectCount = _selectCount.EndsWith(",") ? _selectCount[..^1] : _selectCount;
-                    sbSelect.AppendLine($"SELECT {_selectCount} FROM ({query}) AS {_initialTable}");
+                    sbSelect.AppendLine($"SELECT {_selectCount}");
+                    sbSelect.AppendLine($"FROM ({query}) AS {_initialTable}");
                 }
                 else
                 {
                     _selectCount = _selectCount.EndsWith(",") ? _selectCount[..^1] : _selectCount;
-                    sbSelect.AppendLine($"SELECT {_selectCount} FROM {_initialTable}");
+                    sbSelect.AppendLine($"SELECT {_selectCount}");
+                    sbSelect.AppendLine($"FROM {_initialTable}");
                 }
             }
         }
@@ -948,11 +952,13 @@ public class QueryBuilderHelper : IQueryBuilder
                 if (_child != null)
                 {
                     var query = _child.Build();
-                    sbSelect.AppendLine($"SELECT * FROM ({query}) AS {_initialTable}");
+                    sbSelect.AppendLine($"SELECT *");
+                    sbSelect.AppendLine($"FROM ({query}) AS {_initialTable}");
                 }
                 else
                 {
-                    sbSelect.AppendLine($"SELECT * FROM {_initialTable}");
+                    sbSelect.AppendLine($"SELECT *");
+                    sbSelect.AppendLine($"FROM {_initialTable}");
                 }
             }
             else
@@ -960,11 +966,13 @@ public class QueryBuilderHelper : IQueryBuilder
                 if (_child != null)
                 {
                     var query = _child.Build();
-                    sbSelect.AppendLine($"SELECT {string.Join(",", select)} FROM ({query}) AS {_initialTable}");
+                    sbSelect.AppendLine($"SELECT {string.Join(",", select)}");
+                    sbSelect.AppendLine($"FROM ({query}) AS {_initialTable}");
                 }
                 else
                 {
-                    sbSelect.AppendLine($"SELECT {string.Join(",", select)} FROM {_initialTable}");
+                    sbSelect.AppendLine($"SELECT {string.Join(",", select)}");
+                    sbSelect.AppendLine($"FROM {_initialTable}");
                 }
             }
         }
@@ -980,11 +988,13 @@ public class QueryBuilderHelper : IQueryBuilder
                 if (_child != null)
                 {
                     var query = _child.Build();
-                    sbSelect.AppendLine($"SELECT DISTINCT * FROM ({query}) AS {_initialTable}");
+                    sbSelect.AppendLine($"SELECT DISTINCT *");
+                    sbSelect.AppendLine($"FROM ({query}) AS {_initialTable}");
                 }
                 else
                 {
-                    sbSelect.AppendLine($"SELECT DISTINCT * FROM {_initialTable}");
+                    sbSelect.AppendLine($"SELECT DISTINCT *");
+                    sbSelect.AppendLine($"FROM {_initialTable}");
                 }
             }
             else
@@ -992,11 +1002,13 @@ public class QueryBuilderHelper : IQueryBuilder
                 if (_child != null)
                 {
                     var query = _child.Build();
-                    sbSelect.AppendLine($"SELECT DISTINCT {string.Join(",", select)}  FROM ({query}) AS {_initialTable}");
+                    sbSelect.AppendLine($"SELECT DISTINCT {string.Join(",", select)}");
+                    sbSelect.AppendLine($"FROM ({query}) AS {_initialTable}");
                 }
                 else
                 {
-                    sbSelect.AppendLine($"SELECT DISTINCT {string.Join(",", select)} FROM {_initialTable}");
+                    sbSelect.AppendLine($"SELECT DISTINCT {string.Join(",", select)}");
+                    sbSelect.AppendLine($"FROM {_initialTable}");
                 }
             }
         }
