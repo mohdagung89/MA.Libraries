@@ -12,7 +12,7 @@ using System.Reflection;
 
 namespace QueryBuilderLibrary.CosmosDbQuery;
 
-public interface IQuerySelect<T>
+public interface IQuerySelect<T> : IQuerySelect
 {
     IQueryBuilder<T> Select(Func<T, List<string>> delegateFunc);
     IQueryBuilder<T> SelectAs(Func<T, string> delegateFunc, string alias);
@@ -21,10 +21,10 @@ public interface IQuerySelect<T>
     IQueryBuilder<T> SelectRowCount();
     IQueryBuilder<T> SelectDistinct(Func<T, List<string>> delegateFunc);
     IQueryBuilder<T> SelectSum(Func<T, List<string>> delegateFunc);
-    IQueryBuilder<T> SelectRawFunctionAs(string rawFunction, string alias);
+    new IQueryBuilder<T> SelectRawFunctionAs(string rawFunction, string alias);
     IQueryBuilder<T> SelectRawFunctionAs<TOutput>(string rawFunction, Func<TOutput, string> delegateFunc);
 }
-public interface IQueryWhere<T>
+public interface IQueryWhere<T> : IQueryWhere
 {
     IQueryBuilder<T> Where(Func<T, string> delegateFunc, Operation operation, string value);
     IQueryBuilder<T> Where(Func<T, string> delegateFunc, Operation operation, int value);
@@ -49,15 +49,15 @@ public interface IQueryWhere<T>
     IQueryBuilder<T> WhereContains(Func<T, string> delegateFunc, string value);
     IQueryBuilder<T> WhereNotContains(Func<T, string> delegateFunc, string value);
 }
-public interface IQueryOrder<T>
+public interface IQueryOrder<T> : IQueryOrder
 {
     IQueryBuilder<T> OrderBy(Func<T, string> delegateFunc, string? orderMethod = SORTING_FILTER.ASCENDING);
 }
-public interface IQueryGroup<T>
+public interface IQueryGroup<T> : IQueryGroup
 {
     IQueryBuilder<T> GroupBy(Func<T, List<string>> delegateFunc);
 }
-public interface ISubQuery<T>
+public interface ISubQuery<T> : ISubQuery
 {
     IQueryBuilder<T> FromSubQuery(Action<IQueryBuilder<T>> query);
 }
