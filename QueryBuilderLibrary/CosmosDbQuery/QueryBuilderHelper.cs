@@ -60,6 +60,12 @@ public enum Operation
     Contains
 }
 
+public class SORTING_FILTER
+{
+    public const string ASCENDING = "ASC";
+    public const string DESCENDING = "DESC";
+}
+
 /// <summary>
 /// A class enum extensions
 /// </summary>
