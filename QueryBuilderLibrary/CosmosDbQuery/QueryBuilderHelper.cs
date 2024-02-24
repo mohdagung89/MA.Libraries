@@ -1,7 +1,7 @@
 /*
  * QueryBuilderHelper
  * Author: MohdAgung
- * Version: v1.2.0
+ * Version: v1.2.1
  * Description: A powerful query building library for CosmosDb database.
  * Source: https://github.com/mohdagung89/MA.Libraries
  */
@@ -176,8 +176,6 @@ public class QueryBuilderHelper : IQueryBuilder
     private List<string> _selectMax = new();
     private List<string> _selectRawFunction = new();
     private List<string> _whereList = new();
-    private List<string> _whereNullList = new();
-    private List<string> _whereNotNullList = new();
     private List<string> _orderList = new();
     private List<string> _groupByList = new();
     private bool _isPaging = false;
@@ -597,7 +595,7 @@ public class QueryBuilderHelper : IQueryBuilder
     /// <returns></returns>
     public IQueryBuilder WhereNull(string column)
     {
-        _whereNullList.Add($"{_initialTable}.{column} {Operation.Equal.GetDescription()} null");
+        _whereList.Add($"{_initialTable}.{column} {Operation.Equal.GetDescription()} null");
         return this;
     }
 
@@ -608,7 +606,7 @@ public class QueryBuilderHelper : IQueryBuilder
     /// <returns></returns>
     public IQueryBuilder WhereNotNull(string column)
     {
-        _whereNotNullList.Add($"{_initialTable}.{column} {Operation.NotEqual.GetDescription()} null");
+        _whereList.Add($"{_initialTable}.{column} {Operation.NotEqual.GetDescription()} null");
         return this;
     }
 
@@ -1013,13 +1011,9 @@ public class QueryBuilderHelper : IQueryBuilder
             }
         }
 
-        if (_whereList.Any() || _whereNullList.Any() || _whereNotNullList.Any())
+        if (_whereList.Any())
         {
-            var where = new List<string>();
-            where.AddRange(_whereList);
-            where.AddRange(_whereNullList);
-            where.AddRange(_whereNotNullList);
-            sbWhere.AppendLine($"WHERE {string.Join(" AND ", where)}");
+            sbWhere.AppendLine($"WHERE {string.Join(" AND ", _whereList)}");
         }
 
         if (_groupByList.Any())
